@@ -196,3 +196,28 @@ let Currency = {
     }
   }
 }
+
+// let a = [1, true] as const;
+
+function tuple<T extends unknown[]>(...ts: T) {
+  return ts
+}
+let a = tuple(1, true);
+
+// function isString(a: unknown): a is string {
+//   return typeof a === 'string';
+// }
+
+// function parseInput(input: string | number) {
+//   let formattedInput: string;
+//   if (isString(input)) {
+//     formattedInput = input.toUpperCase();
+//   } else {
+//     input.join('123')
+//   }
+// }
+
+/** Условные типы */
+type IsString<T> = T extends string ? true : false;
+type A = IsString<number>;
+type B = IsString<string>;
