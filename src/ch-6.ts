@@ -221,3 +221,7 @@ let a = tuple(1, true);
 type IsString<T> = T extends string ? true : false;
 type A = IsString<number>;
 type B = IsString<string>;
+
+type Without<T, U> = T extends U ? never : T;
+
+type C = Without<boolean | number | string, boolean>
