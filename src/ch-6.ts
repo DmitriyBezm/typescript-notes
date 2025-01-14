@@ -225,3 +225,63 @@ type B = IsString<string>;
 type Without<T, U> = T extends U ? never : T;
 
 type C = Without<boolean | number | string, boolean>
+
+type SecondArg<F> = F extends (a: any, b: infer B) => any ? B : never
+
+type SliceTypeSecondArg = SecondArg<typeof Array['prototype']['slice']>
+
+/** Номинальные типы */
+type CompanyID = string & {readonly brand: unique symbol}
+type OrderID = string & {readonly brand: unique symbol}
+type UserID = string & {readonly brand: unique symbol}
+type ID = CompanyID | OrderID | UserID
+
+function CompanyID(id: string) {
+  return id as CompanyID
+}
+function OrderID(id: string) {
+  return id as OrderID
+}
+function UserID(id: string) {
+  return id as UserID
+}
+
+function getQueryForUser(id: UserID) {}
+
+let companyId = CompanyID('8a6076cf')
+let orderId = OrderID('9994acc1')
+let userId = UserID('d21b1dbf')
+
+getQueryForUser(companyId)
+
+// Задача написать тип, который выделяет уникальные типы
+// 1 | 2 | 3, 2 | 3 | 4 -> 1 | 4
+
+type ExclusiveFirst<T, U> = T extends U ? never : T;
+// Исключаем общие типы из первого и второго общих типов и затем объединяем исключенные
+type Exclusive<T, U> = ExclusiveFirst<T, U> | ExclusiveFirst<U, T>
+
+// Пример работы Exclusive<T, U> для пары 1 | 2 | 3, 2 | 3 | 4
+
+// 1 Сравнение пары U, T
+// a. 1 extends 2 | 3 | 4 -> 1;
+// b. 2 extends 2 | 3 | 4 -> never;
+// c. 3 extends 2 | 3 | 4 -> never;
+// d. Выводится тип 1 | never | never
+
+// 2 Сравнение пары T, U
+// a. 2 extends 1 | 2 | 3 -> never;
+// b. 3 extends 1 | 2 | 3 -> never;
+// c. 4 extends 1 | 2 | 3 -> 4;
+// d. Выводится тип never | never | 4
+
+// 3 Объединяем результаты двух предыдущих шагов через или
+// a. (1 | never | never) | (never | never | 4)
+// b. упрощается до 1 | 4
+
+type UP1 = Exclusive<1 | 2 | 3, 2 | 3 | 4>; // 1 | 4
+type UP2 = Exclusive<2 | 3 | 4, 1 | 2 | 3>; // 1 | 4
+type UP3 = Exclusive<2 | 3 | 4 | 5 | 6 | 7, 1 | 2 | 3>; // 1 | 4 | 5 | 6 | 7
+type UP4 = Exclusive<1 | 2 | 3, 2 | 3 | 4 | 5 | 6 | 7>; // 1 | 4 | 5 | 6 | 7
+
+// type Exclusive2<T, U> = T extends U ? Exclusive2<U, T> : never;
