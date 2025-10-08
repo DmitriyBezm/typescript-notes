@@ -65,21 +65,21 @@ function OptionPattern<T>(value: T): OptionPattern<T> {
   return new Some(value);
 }
 
-let result = OptionPattern(6)
-  .flatMap(n => OptionPattern(n * 3))
-  .flatMap(n => new None)
-  .getOrElse(7)
+// let result = OptionPattern(6)
+//   .flatMap(n => OptionPattern(n * 3))
+//   .flatMap(n => new None)
+//   .getOrElse(7)
 
 function ask() {
   let result = prompt('When is your birthday?');
   if (result === null) {
-    return [];
+    return OptionPattern([]);
   }
 
   return [result];
 }
 
-function parse(birthday: string): Date[] {
+function parse(birthday: string) {
   const date = new Date(birthday);
 
   if (!isValidDate(date)) {
