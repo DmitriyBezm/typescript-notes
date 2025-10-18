@@ -1,3 +1,5 @@
+export {}
+
 /** Существующий пользователь, переданный с сервера */
 type ExistingUser = {
   id: number;
@@ -285,3 +287,23 @@ type UP3 = Exclusive<2 | 3 | 4 | 5 | 6 | 7, 1 | 2 | 3>; // 1 | 4 | 5 | 6 | 7
 type UP4 = Exclusive<1 | 2 | 3, 2 | 3 | 4 | 5 | 6 | 7>; // 1 | 4 | 5 | 6 | 7
 
 // type Exclusive2<T, U> = T extends U ? Exclusive2<U, T> : never;
+
+const userInfo = ['a', 1, ['mister', 'twister'] as const]
+
+type Flatten<T> = T extends any[] ? T[number] : T;
+type FL1 = Flatten<typeof userInfo>
+type isArray<T> = T extends any[] ? true : false;
+
+// Более продвинутая версия Flatten с использованием ключевого слова infer
+type FlattenV2<T> = T extends (infer Item)[] ? Item : T;
+
+// Распакоука промиса
+type UnwrapPromise<T> = T extends Promise<(infer Item)> ? Item : T
+
+type P1 = Promise<string>;
+type P2 = Promise<number>;
+type P3 = [2];
+
+type UNWP1 = UnwrapPromise<P1>;
+type UNWP2 = UnwrapPromise<P2>;
+type UNWP3 = UnwrapPromise<P3>;
